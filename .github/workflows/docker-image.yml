@@ -46,18 +46,18 @@ jobs:
     - name: Run migrations
       working-directory: ./project
       run: |
-        docker-compose exec web python manage.py migrate
+        docker-compose exec -T web python manage.py migrate
 
     - name: Lint with flake8
       working-directory: ./project
       run: |
-        docker-compose exec web flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        docker-compose exec web flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        docker-compose exec -T web flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        docker-compose exec -T web flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with pytest
       working-directory: ./project
       run: |
-        docker-compose exec web pytest project/test.py  # Specify the path to your test file
+        docker-compose exec -T web pytest project/test.py  # Specify the path to your test file
 
     - name: Check server status
       working-directory: ./project
