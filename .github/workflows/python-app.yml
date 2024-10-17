@@ -52,6 +52,7 @@ jobs:
     - name: Check server status
       run: |
         curl -f http://127.0.0.1:8000/hello_geeks/ || exit 1  # Check if the server is running
+        curl -f http://127.0.0.1:8000/signup/ || exit 1  # Check if the server is running
     - name: Test with pytest
       run: |
          pytest project/test.py  # Specify the path to your test file
