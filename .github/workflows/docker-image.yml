@@ -32,6 +32,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Set up Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
     - name: Build and Run Docker
       run: |
         docker-compose up -d --build
