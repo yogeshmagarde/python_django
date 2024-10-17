@@ -38,27 +38,33 @@ jobs:
         sudo apt-get install -y docker-compose
 
     - name: Build and Run Docker
+      working-directory: ./project
       run: |
         docker-compose up -d --build
         sleep 30  # Wait for the services to start
 
     - name: Run migrations
+      working-directory: ./project
       run: |
         docker-compose exec web python manage.py migrate
 
     - name: Lint with flake8
+      working-directory: ./project
       run: |
         docker-compose exec web flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         docker-compose exec web flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: Test with pytest
+      working-directory: ./project
       run: |
         docker-compose exec web pytest project/test.py  # Specify the path to your test file
 
     - name: Check server status
+      working-directory: ./project
       run: |
         curl -f http://127.0.0.1:8000/hello_geeks/ || exit 1  # Check if the server is running
 
     - name: Stop Docker
+      working-directory: ./project
       run: |
         docker-compose down
