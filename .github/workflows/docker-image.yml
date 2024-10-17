@@ -57,7 +57,7 @@ jobs:
     - name: Test with pytest
       working-directory: ./project
       run: |
-        docker-compose exec -T web pytest project/test.py  # Specify the path to your test file
+        docker-compose exec -T web pytest test.py  # Specify the path to your test file
 
     - name: Check server status
       working-directory: ./project
