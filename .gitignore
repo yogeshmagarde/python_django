@@ -8,3 +8,6 @@ db.sqlite3
 #migrations
 migrations
 env
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir

@@ -58,7 +58,4 @@ class Profile_View(APIView):
         profile = Profile.objects.create(user_id=users_id, image=request.FILES.get('image'))
         profile.save()
         return Response({"ack": "User image uploaded successfully..."}, status= status.HTTP_201_CREATED)
-        
-        return Response({"ack": "User image uploaded successfully..."}, status= status.HTTP_201_CREATED)
-        # return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
