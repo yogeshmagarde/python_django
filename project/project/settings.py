@@ -31,13 +31,18 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'chat',
+    'app',
+    'myapp',
+    'celery',
+    "django_celery_beat",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app',
     'rest_framework',
     'rest_framework.authtoken',
 ]
@@ -71,6 +76,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
+
+
+# Channels ......
+ASGI_APPLICATION = "project.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)], # for without docker
+            "hosts": [("redis", 6379)], # for docker 
+        },
+    },
+}
+
+
 
 
 # Database
@@ -159,6 +179,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # }
 
-
+# signals......
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+# celery.......
+
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://redis:6379/0' # for docker 
+# CELERY_BROKER_URL = 'redis://localhost:6379/0' # for local
+
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0' # for docker 
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0' # for local
+
+# set the celery timezone
+CELERY_TIMEZONE = 'UTC'

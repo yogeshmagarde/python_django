@@ -11,11 +11,8 @@ services:
       - .:/music_service
     ports:
       - "8000:8000"
-    command: python manage.py runserver 0.0.0.0:8000
-    
     environment:
-      - DATABASE_URL=mysql://root:password@db:3306/music_db  # Use this in your Django settings
-
+      - DATABASE_URL=mysql://root:password@db:3307/music_db  # Use this in your Django settings
 
   db:
     image: mysql:8.0  # Specify the MySQL version you want
@@ -26,9 +23,44 @@ services:
       MYSQL_USER: user                  # Create a user named 'user'
       MYSQL_PASSWORD: userpassword      # Set the user's password
     ports:
-      - "3306:3306"                     # Expose MySQL on port 3306
+      - "3307:3306"                     # Expose MySQL on port 3306
     volumes:
       - db_data:/var/lib/mysql          # Persist MySQL data
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_worker
+    command: celery -A project worker --pool=solo --loglevel=info  # Adjust the command based on your project name
+
+    depends_on:
+      - redis  # Ensure Redis is up before Celery starts
+    volumes:
+      - .:/music_service  # Mount your project directory
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Same broker URL as in settings
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_beat
+    command: celery -A project beat --loglevel=info
+    depends_on:
+      - redis
+      - celery
+    volumes:
+      - .:/music_service
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+
 volumes:
-  db_data:             
+  db_data:
