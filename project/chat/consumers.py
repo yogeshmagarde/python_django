@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ObjectDoesNotExist
 from app.models import Profile
+from app.models import Profile, Message
 from django.contrib.auth.models import User
 from django.conf import settings
 
