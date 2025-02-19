@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+<center>
+    <h2>Login</h2>
+    <form id="login-form">
+        {% csrf_token %} 
+        
+        <label>Username:</label>
+        <input type="text" id="username" placeholder="Enter your username" required><br><br>
+        
+        <label>Password:</label>
+        <input type="password" id="password" placeholder="Enter your password" required><br><br>
+        
+        <button type="submit">Login</button>
+    </form>
+    
+    <button id="logout-button" style="display: none;" onclick="logoutUser()">Logout</button>
+</center>
+
+<script>
+    document.getElementById("login-form").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie) {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith("csrftoken=")) {
+                        cookieValue = cookie.substring("csrftoken=".length, cookie.length);
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrfToken = getCSRFToken(); 
+
+        try {
+            const response = await fetch("/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken  
+                },
+                body: JSON.stringify({ username: username, password: password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.clear();
+
+                
+                localStorage.setItem("loggedInUser", data.username);
+                localStorage.setItem("authToken", data.token);
+
+                alert(`Login Successful!\nUsername: ${data.username}`);
+                window.location.href = "/chat/";
+            } else {
+                alert("Error: " + (data.message || "Unknown error"));
+            }
+        } catch (error) {
+            console.error("Login failed:", error);
+            alert("Login failed. Please try again.");
+        }
+    });
+
+    function logoutUser() {
+        localStorage.clear(); 
+        alert("Logged out successfully! Please log in again.");
+        window.location.href = "/userlogin";
+    }
+</script>
+
+</body>
+</html>
